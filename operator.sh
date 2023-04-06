@@ -6,6 +6,8 @@ kubectl get --watch --output-watch-events configmap \
     --no-headers | \
     while read next; do
 
+        echo $next
+
         NAME=$(echo $next | cut -d' ' -f2)
         EVENT=$(echo $next | cute -d' ' -f1)
 
