@@ -1,5 +1,9 @@
 # NGINX Operator
 
+![](https://img.shields.io/badge/platform-kubernetes-blue)
+![](https://img.shields.io/badge/operator-shell%20script-brightgreen)
+![](https://img.shields.io/github/v/release/amirhnajafiz/nginx-operator)
+
 Nginx operator for Kubernetes. This operator watches the changes of ```ConfigMaps``` and
 rollouts a new deployment whenever you release a new ```ConfigMap``` for you ```nginx``` application.
 
