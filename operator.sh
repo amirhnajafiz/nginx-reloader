@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
-# make an alias
-alias k=kubectl
 
-k get --watch --output-watch-events configmap \
+kubectl get --watch --output-watch-events configmap \
     -o=custome-columns=type:type,name:object.metadata.name \
     --no-headers | \
     while read next; do
@@ -13,7 +11,7 @@ k get --watch --output-watch-events configmap \
 
         case $EVENT in
             ADDED|MODIFIED)
-                k apply -f - << EOF
+                kubectl apply -f - << EOF
 apiVersion: apps/v1
 kind: Deployment
 metadata: { name: $NAME }
@@ -39,7 +37,7 @@ spec:
 EOF
                 ;;
             DELETED)
-                k delete deploy $NAME
+                kubectl delete deploy $NAME
                 ;;
         esac
 done
