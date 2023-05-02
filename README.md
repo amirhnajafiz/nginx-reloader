@@ -24,6 +24,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: sample
+  app: nginx
 data:
   index.html: hello world
 ```
