@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
-metadata: { name: $NAME }
+metadata: { name: &NAME }
 spec:
     selector:
-        matchLabels: { app: $NAME }
+        matchLabels: { app: &NAME }
     template:
         metadata:
-            labels: { app: $NAME }
-            annotations: { kubectl.kubernetes.io/restartedAt: $(date) }
+            labels: { app: &NAME }
+            annotations: { kubectl.kubernetes.io/restartedAt: &DATE }
         spec:
             containers:
             - image: nginx:1.7.9
-              name: $NAME
+              name: &NAME
               ports:
               - containerPort: 80
               volumeMounts:
@@ -26,4 +26,4 @@ spec:
         volumes:
         - name: data
           configMap:
-            name: $NAME
+            name: &NAME

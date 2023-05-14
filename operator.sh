@@ -19,7 +19,14 @@ kubectl get --watch --output-watch-events configmap \
 
         case $EVENT in
             ADDED|MODIFIED)
-                kubectl apply -f deployment.yml
+                # export deployment file into export directory
+                cp deployment.yml export/deployment.yml
+
+                # replace names
+                sed -i -e 's/&NAME/$NAME/g' export/deployment.yml
+                sed -i -e 's/&DATE/$(date)/g' export/deployment.yml
+
+                kubectl apply -f export/deployment.yml
                 ;;
             DELETED)
                 kubectl delete deploy $NAME
