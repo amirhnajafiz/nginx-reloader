@@ -26,7 +26,7 @@ metadata:
   name: sample
   app: nginx
 data:
-  index.html: hello world
+  index.html: "<h1>Hello World!</h1>"
 ```
 
 ### Test
