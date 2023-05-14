@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
 
+
+FILEPATH="export/deployment.yml"
+
+
+
 kubectl get --watch --output-watch-events configmap \
     -o=custome-columns=type:type,name:object.metadata.name,app:object.metadata.labels.app \
     --no-headers | \
@@ -20,13 +25,13 @@ kubectl get --watch --output-watch-events configmap \
         case $EVENT in
             ADDED|MODIFIED)
                 # export deployment file into export directory
-                cp deployment.yml export/deployment.yml
+                cp deployment.yml "$FILEPATH"
 
                 # replace names
-                sed -i -e 's/&NAME/$NAME/g' export/deployment.yml
-                sed -i -e 's/&DATE/$(date)/g' export/deployment.yml
+                sed -i -e 's/&NAME/$NAME/g' "$FILEPATH"
+                sed -i -e 's/&DATE/$(date)/g' "$FILEPATH"
 
-                kubectl apply -f export/deployment.yml
+                kubectl apply -f "$FILEPATH"
                 ;;
             DELETED)
                 kubectl delete deploy $NAME
