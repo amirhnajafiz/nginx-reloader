@@ -6,6 +6,13 @@ FILEPATH="export/deployment.yml"
 
 
 
+# create export directory on local
+if [ ! -d "export" ]; then
+    mkdir export
+fi
+
+
+
 kubectl get --watch --output-watch-events configmap \
     -o=custome-columns=type:type,name:object.metadata.name,app:object.metadata.labels.app \
     --no-headers | \
@@ -38,4 +45,3 @@ kubectl get --watch --output-watch-events configmap \
                 ;;
         esac
 done
-

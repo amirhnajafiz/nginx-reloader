@@ -1,0 +1,7 @@
+# project
+export/
+
+# os
+.DS_Store
+.ides/
+.vscode/
