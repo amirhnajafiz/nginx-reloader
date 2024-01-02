@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"fmt"
+	"k8s.io/apimachinery/pkg/api/resource"
 	v12 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"time"
 
@@ -121,7 +122,6 @@ func (r *Reconciler) CreateDeployment(ctx context.Context) (ctrl.Result, error) 
 					Annotations: make(map[string]string),
 				},
 				Spec: core.PodSpec{
-
 					Containers: []core.Container{
 						{
 							Name:  name,
@@ -136,6 +136,16 @@ func (r *Reconciler) CreateDeployment(ctx context.Context) (ctrl.Result, error) 
 								{
 									Name:      "data",
 									MountPath: "/usr/share/nginx/html",
+								},
+							},
+							Resources: core.ResourceRequirements{
+								Limits: core.ResourceList{
+									core.ResourceCPU:    resource.Quantity{Format: "250m"},
+									core.ResourceMemory: resource.Quantity{Format: "64Mi"},
+								},
+								Requests: core.ResourceList{
+									core.ResourceCPU:    resource.Quantity{Format: "250m"},
+									core.ResourceMemory: resource.Quantity{Format: "64Mi"},
 								},
 							},
 						},
