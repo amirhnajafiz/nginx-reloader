@@ -8,6 +8,7 @@ import (
 	"github.com/go-logr/logr"
 	"github.com/opdev/subreconciler"
 	"k8s.io/api/apps/v1beta1"
+	core "k8s.io/api/core/v1"
 	v1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -44,7 +45,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 	case apierrors.IsNotFound(err):
 		// configmap not found
 		r.logger.Info(fmt.Sprintf("Configmap %s in namespace %s not found!", req.Name, req.Namespace))
-		return subreconciler.Evaluate(subreconciler.DoNotRequeue())
+		return r.CreateDeployment(ctx)
 	case err != nil:
 		// error in fetch
 		r.logger.Error(err, "failed to fetch object")
@@ -94,6 +95,34 @@ func (r *Reconciler) UpdateDeployment(ctx context.Context) (ctrl.Result, error) 
 }
 
 func (r *Reconciler) CreateDeployment(ctx context.Context) (ctrl.Result, error) {
+	replicas := int32(1)
+	deployment := &v1beta1.Deployment{
+		ObjectMeta: ctrl.ObjectMeta{
+			Name:        fmt.Sprintf("%s-nginx-deployment", r.configmap.Name),
+			Namespace:   r.configmap.Namespace,
+			Labels:      r.configmap.Labels,
+			Annotations: r.configmap.Annotations,
+		},
+		Spec: v1beta1.DeploymentSpec{
+			Replicas: &replicas,
+			Template: core.PodTemplateSpec{
+				Spec: core.PodSpec{
+					Containers: []core.Container{
+						{
+							Image: "nginx:1.7.9",
+							Ports: []core.ContainerPort{
+								{
+									HostPort:      80,
+									ContainerPort: 80,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
 	return subreconciler.Evaluate(subreconciler.DoNotRequeue())
 }
 
