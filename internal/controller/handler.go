@@ -3,8 +3,6 @@ package controller
 import (
 	"context"
 	"fmt"
-	"k8s.io/apimachinery/pkg/api/resource"
-	v12 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"time"
 
 	"github.com/go-logr/logr"
@@ -13,6 +11,8 @@ import (
 	core "k8s.io/api/core/v1"
 	v1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/resource"
+	v12 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -45,7 +45,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 	// get configmap object
 	switch err := r.Get(ctx, req.NamespacedName, r.configmap); {
 	case apierrors.IsNotFound(err):
-		// configmap not found
+		// configmap not found, create it
 		r.logger.Info(fmt.Sprintf("Configmap %s in namespace %s not found!", req.Name, req.Namespace))
 		return r.CreateDeployment(ctx)
 	case err != nil:
@@ -165,6 +165,11 @@ func (r *Reconciler) CreateDeployment(ctx context.Context) (ctrl.Result, error) 
 				},
 			},
 		},
+	}
+
+	if err := r.Create(ctx, deployment); err != nil {
+		r.logger.Error(err, "failed to create deployment")
+		return subreconciler.Evaluate(subreconciler.Requeue())
 	}
 
 	return subreconciler.Evaluate(subreconciler.DoNotRequeue())
