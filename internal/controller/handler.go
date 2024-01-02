@@ -51,36 +51,41 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 	default:
 		// check delete event
 		if r.configmap.ObjectMeta.DeletionTimestamp != nil {
-			// delete the deployment related to that configmap
+			return r.DeleteDeployment(ctx)
 		}
-
-		// check if exists update
-		// else create
 	}
 
+	return r.UpsertDeployment(ctx)
+}
+
+func (r *Reconciler) UpsertDeployment(ctx context.Context) (ctrl.Result, error) {
 	return subreconciler.Evaluate(subreconciler.DoNotRequeue())
 }
 
-func (r *Reconciler) Upsert(ctx context.Context) (ctrl.Result, error) {
-	return subreconciler.Evaluate(subreconciler.DoNotRequeue())
-}
-
-func (r *Reconciler) Delete(ctx context.Context) (ctrl.Result, error) {
+func (r *Reconciler) DeleteDeployment(ctx context.Context) (ctrl.Result, error) {
 	deployment := &v1beta1.Deployment{}
 	key := client.ObjectKey{
 		Name:      fmt.Sprintf("%s-nginx-deployment", r.configmap.Name),
 		Namespace: r.configmap.Namespace,
 	}
 
-	// get configmap object
+	// get deployment object
 	switch err := r.Get(ctx, key, deployment); {
 	case apierrors.IsNotFound(err):
-		// configmap not found
-		r.logger.Info(fmt.Sprintf("Configmap %s in namespace %s not found!", key.Name, key.Namespace))
+		// deployment not found
+		r.logger.Info(fmt.Sprintf("Deployment %s in namespace %s not found!", key.Name, key.Namespace))
 		return subreconciler.Evaluate(subreconciler.DoNotRequeue())
 	case err != nil:
 		// error in fetch
 		r.logger.Error(err, "failed to fetch object")
 		return subreconciler.Evaluate(subreconciler.Requeue())
 	}
+
+	// delete deployment
+	if err := r.Delete(ctx, deployment); err != nil {
+		r.logger.Error(err, "failed to delete deployment")
+		return subreconciler.Evaluate(subreconciler.Requeue())
+	}
+
+	return subreconciler.Evaluate(subreconciler.DoNotRequeue())
 }
