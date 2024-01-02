@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/go-logr/logr"
 	"github.com/opdev/subreconciler"
@@ -55,10 +56,44 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 		}
 	}
 
-	return r.UpsertDeployment(ctx)
+	return r.UpdateDeployment(ctx)
 }
 
-func (r *Reconciler) UpsertDeployment(ctx context.Context) (ctrl.Result, error) {
+func (r *Reconciler) UpdateDeployment(ctx context.Context) (ctrl.Result, error) {
+	deployment := &v1beta1.Deployment{}
+	key := client.ObjectKey{
+		Name:      fmt.Sprintf("%s-nginx-deployment", r.configmap.Name),
+		Namespace: r.configmap.Namespace,
+	}
+
+	// get deployment object
+	switch err := r.Get(ctx, key, deployment); {
+	case apierrors.IsNotFound(err):
+		// deployment not found
+		r.logger.Info(fmt.Sprintf("Deployment %s in namespace %s not found!", key.Name, key.Namespace))
+		return subreconciler.Evaluate(subreconciler.DoNotRequeue())
+	case err != nil:
+		// error in fetch
+		r.logger.Error(err, "failed to fetch object")
+		return subreconciler.Evaluate(subreconciler.Requeue())
+	}
+
+	// rollout restart
+	if deployment.Spec.Template.ObjectMeta.Annotations == nil {
+		deployment.Spec.Template.ObjectMeta.Annotations = make(map[string]string)
+	}
+	deployment.Spec.Template.ObjectMeta.Annotations["kubectl.kubernetes.io/restartedAt"] = time.Now().Format(time.RFC3339)
+
+	// update deployment
+	if err := r.Update(ctx, deployment); err != nil {
+		r.logger.Error(err, "failed to update deployment")
+		return subreconciler.Evaluate(subreconciler.Requeue())
+	}
+
+	return subreconciler.Evaluate(subreconciler.DoNotRequeue())
+}
+
+func (r *Reconciler) CreateDeployment(ctx context.Context) (ctrl.Result, error) {
 	return subreconciler.Evaluate(subreconciler.DoNotRequeue())
 }
 
