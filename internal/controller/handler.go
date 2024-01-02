@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"fmt"
+	v12 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"time"
 
 	"github.com/go-logr/logr"
@@ -95,25 +96,58 @@ func (r *Reconciler) UpdateDeployment(ctx context.Context) (ctrl.Result, error) 
 }
 
 func (r *Reconciler) CreateDeployment(ctx context.Context) (ctrl.Result, error) {
+	name := fmt.Sprintf("%s-nginx-deployment", r.configmap.Name)
 	replicas := int32(1)
 	deployment := &v1beta1.Deployment{
 		ObjectMeta: ctrl.ObjectMeta{
-			Name:        fmt.Sprintf("%s-nginx-deployment", r.configmap.Name),
+			Name:        name,
 			Namespace:   r.configmap.Namespace,
 			Labels:      r.configmap.Labels,
 			Annotations: r.configmap.Annotations,
 		},
 		Spec: v1beta1.DeploymentSpec{
+			Selector: &v12.LabelSelector{
+				MatchLabels: map[string]string{
+					"app": name,
+				},
+			},
 			Replicas: &replicas,
 			Template: core.PodTemplateSpec{
+				ObjectMeta: ctrl.ObjectMeta{
+					Labels: map[string]string{
+						"app":  name,
+						"type": "nginx",
+					},
+					Annotations: make(map[string]string),
+				},
 				Spec: core.PodSpec{
+
 					Containers: []core.Container{
 						{
+							Name:  name,
 							Image: "nginx:1.7.9",
 							Ports: []core.ContainerPort{
 								{
 									HostPort:      80,
 									ContainerPort: 80,
+								},
+							},
+							VolumeMounts: []core.VolumeMount{
+								{
+									Name:      "data",
+									MountPath: "/usr/share/nginx/html",
+								},
+							},
+						},
+					},
+					Volumes: []core.Volume{
+						{
+							Name: "data",
+							VolumeSource: core.VolumeSource{
+								ConfigMap: &core.ConfigMapVolumeSource{
+									LocalObjectReference: core.LocalObjectReference{
+										Name: r.configmap.Name,
+									},
 								},
 							},
 						},
