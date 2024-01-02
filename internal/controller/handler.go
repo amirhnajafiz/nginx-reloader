@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-logr/logr"
 	"github.com/opdev/subreconciler"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -15,8 +16,9 @@ import (
 // Reconciler for nginx configmap operator
 type Reconciler struct {
 	client.Client
-	logger logr.Logger
-	scheme *runtime.Scheme
+	configmap *v1.ConfigMap
+	logger    logr.Logger
+	scheme    *runtime.Scheme
 }
 
 // NewReconciler generates a new reconciler
