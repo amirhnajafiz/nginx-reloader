@@ -45,9 +45,9 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 	// get configmap object
 	switch err := r.Get(ctx, req.NamespacedName, r.configmap); {
 	case apierrors.IsNotFound(err):
-		// configmap not found, create it
+		// configmap not found
 		r.logger.Info(fmt.Sprintf("Configmap %s in namespace %s not found!", req.Name, req.Namespace))
-		return r.CreateDeployment(ctx)
+		return subreconciler.Evaluate(subreconciler.DoNotRequeue())
 	case err != nil:
 		// error in fetch
 		r.logger.Error(err, "failed to fetch object")
@@ -62,6 +62,8 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 	return r.UpdateDeployment(ctx)
 }
 
+// UpdateDeployment updates nginx deployment based on configmap
+// it roll out restarts the deployment
 func (r *Reconciler) UpdateDeployment(ctx context.Context) (ctrl.Result, error) {
 	deployment := &v1beta1.Deployment{}
 	key := client.ObjectKey{
@@ -72,9 +74,9 @@ func (r *Reconciler) UpdateDeployment(ctx context.Context) (ctrl.Result, error) 
 	// get deployment object
 	switch err := r.Get(ctx, key, deployment); {
 	case apierrors.IsNotFound(err):
-		// deployment not found
+		// deployment not found, create it
 		r.logger.Info(fmt.Sprintf("Deployment %s in namespace %s not found!", key.Name, key.Namespace))
-		return subreconciler.Evaluate(subreconciler.DoNotRequeue())
+		return r.CreateDeployment(ctx)
 	case err != nil:
 		// error in fetch
 		r.logger.Error(err, "failed to fetch object")
@@ -96,6 +98,7 @@ func (r *Reconciler) UpdateDeployment(ctx context.Context) (ctrl.Result, error) 
 	return subreconciler.Evaluate(subreconciler.DoNotRequeue())
 }
 
+// CreateDeployment runs when configmap is just created
 func (r *Reconciler) CreateDeployment(ctx context.Context) (ctrl.Result, error) {
 	name := fmt.Sprintf("%s-nginx-deployment", r.configmap.Name)
 	replicas := int32(1)
@@ -175,6 +178,7 @@ func (r *Reconciler) CreateDeployment(ctx context.Context) (ctrl.Result, error) 
 	return subreconciler.Evaluate(subreconciler.DoNotRequeue())
 }
 
+// DeleteDeployment removes the active deployment when configmap is gone
 func (r *Reconciler) DeleteDeployment(ctx context.Context) (ctrl.Result, error) {
 	deployment := &v1beta1.Deployment{}
 	key := client.ObjectKey{
