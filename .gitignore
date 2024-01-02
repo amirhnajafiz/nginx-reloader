@@ -3,5 +3,5 @@ export/
 
 # os
 .DS_Store
-.ides/
+.idea/
 .vscode/
