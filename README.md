@@ -1,14 +1,19 @@
-# nginx-operator
-// TODO(user): Add simple overview of use/purpose
+# NGINX Operator
 
-## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+![](https://img.shields.io/badge/platform-kubernetes-blue)
+![](https://img.shields.io/badge/operator-shell%20script-brightgreen)
+![](https://img.shields.io/github/v/release/amirhnajafiz/nginx-operator)
+
+Nginx operator for Kubernetes. This operator watches the changes of ```ConfigMaps``` and
+rollouts a new deployment whenever you release a new ```ConfigMap``` for you ```nginx``` application.
 
 ## Getting Started
+
 You’ll need a Kubernetes cluster to run against. You can use [KIND](https://sigs.k8s.io/kind) to get a local cluster for testing, or run against a remote cluster.
 **Note:** Your controller will automatically use the current context in your kubeconfig file (i.e. whatever cluster `kubectl cluster-info` shows).
 
 ### Running on the cluster
+
 1. Install Instances of Custom Resources:
 
 ```sh
