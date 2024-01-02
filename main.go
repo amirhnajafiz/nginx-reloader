@@ -15,6 +15,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	//+kubebuilder:scaffold:imports
+
+	"github.com/amirhnajafiz/nginx-configmap-operator/internal/controller"
 )
 
 var (
@@ -58,6 +60,12 @@ func main() {
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
+		os.Exit(1)
+	}
+
+	// setup operator
+	if err := controller.NewReconciler(mgr).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "nginx-configmap")
 		os.Exit(1)
 	}
 
