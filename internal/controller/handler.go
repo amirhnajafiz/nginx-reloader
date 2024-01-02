@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-logr/logr"
 	"github.com/opdev/subreconciler"
+	"k8s.io/api/apps/v1beta1"
 	v1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -58,4 +59,28 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 	}
 
 	return subreconciler.Evaluate(subreconciler.DoNotRequeue())
+}
+
+func (r *Reconciler) Upsert(ctx context.Context) (ctrl.Result, error) {
+	return subreconciler.Evaluate(subreconciler.DoNotRequeue())
+}
+
+func (r *Reconciler) Delete(ctx context.Context) (ctrl.Result, error) {
+	deployment := &v1beta1.Deployment{}
+	key := client.ObjectKey{
+		Name:      fmt.Sprintf("%s-nginx-deployment", r.configmap.Name),
+		Namespace: r.configmap.Namespace,
+	}
+
+	// get configmap object
+	switch err := r.Get(ctx, key, deployment); {
+	case apierrors.IsNotFound(err):
+		// configmap not found
+		r.logger.Info(fmt.Sprintf("Configmap %s in namespace %s not found!", key.Name, key.Namespace))
+		return subreconciler.Evaluate(subreconciler.DoNotRequeue())
+	case err != nil:
+		// error in fetch
+		r.logger.Error(err, "failed to fetch object")
+		return subreconciler.Evaluate(subreconciler.Requeue())
+	}
 }
