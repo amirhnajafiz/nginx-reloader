@@ -6,6 +6,6 @@ import (
 )
 
 type Config struct {
-	Metrics metrics.Config
-	Tracing trace.Config
+	Metrics metrics.Config `mapstructure:"metrics"`
+	Tracing trace.Config   `mapstructure:"tracing"`
 }

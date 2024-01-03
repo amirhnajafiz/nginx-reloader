@@ -8,9 +8,9 @@ const (
 )
 
 type Agent struct {
-	Type     string
-	Endpoint string
-	Ratio    float64
+	Type     string  `mapstructure:"type"`
+	Endpoint string  `mapstructure:"endpoint"`
+	Ratio    float64 `mapstructure:"ratio"`
 }
 
 func (a Agent) getExporter(ctx context.Context) {

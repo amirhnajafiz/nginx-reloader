@@ -1,6 +1,6 @@
 package metrics
 
 type Config struct {
-	Enable bool
-	Port   int
+	Enable bool `mapstructure:"enable"`
+	Port   int  `mapstructure:"port"`
 }
