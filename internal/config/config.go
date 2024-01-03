@@ -12,6 +12,7 @@ import (
 type Config struct {
 	MetricsBindAddress     int              `mapstructure:"metrics_bind_address"`
 	HealthProbeBindAddress int              `mapstructure:"health_probe_bind_address"`
+	LeaderElect            bool             `mapstructure:"leader_elect"`
 	Telemetry              telemetry.Config `mapstructure:"telemetry"`
 }
 

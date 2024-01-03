@@ -6,6 +6,7 @@ func Default() Config {
 	return Config{
 		MetricsBindAddress:     8080,
 		HealthProbeBindAddress: 8081,
+		LeaderElect:            false,
 		Telemetry:              telemetry.Config{},
 	}
 }
