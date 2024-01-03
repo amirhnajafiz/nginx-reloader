@@ -7,28 +7,31 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 )
 
+const (
+	resourceAnnotationKey   = "snappcloud.io/nginx-operator"
+	resourceAnnotationValue = "enable"
+)
+
+// annotationCheck is a selector function for our main loop
+func annotationCheck(annotations map[string]string) bool {
+	if value, ok := annotations[resourceAnnotationKey]; ok {
+		return value == resourceAnnotationValue
+	}
+
+	return false
+}
+
+// ignoreNonNginxConfigmaps is the main filter
 func ignoreNonNginxConfigmaps() predicate.Predicate {
 	return predicate.Funcs{
 		CreateFunc: func(event event.CreateEvent) bool {
-			if value, ok := event.Object.GetAnnotations()["snappcloud.io/nginx-operator"]; ok {
-				return value == "enable"
-			}
-
-			return false
+			return annotationCheck(event.Object.GetAnnotations())
 		},
 		UpdateFunc: func(event event.UpdateEvent) bool {
-			if value, ok := event.ObjectOld.GetAnnotations()["snappcloud.io/nginx-operator"]; ok {
-				return value == "enable"
-			}
-
-			return false
+			return annotationCheck(event.ObjectOld.GetAnnotations()) || annotationCheck(event.ObjectNew.GetAnnotations())
 		},
 		DeleteFunc: func(event event.DeleteEvent) bool {
-			if value, ok := event.Object.GetAnnotations()["snappcloud.io/nginx-operator"]; ok {
-				return value == "enable"
-			}
-
-			return false
+			return annotationCheck(event.Object.GetAnnotations())
 		},
 	}
 }
