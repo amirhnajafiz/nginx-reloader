@@ -7,3 +7,7 @@ type Config struct {
 	HealthProbeBindAddress int              `mapstructure:"health_probe_bind_address"`
 	Telemetry              telemetry.Config `mapstructure:"telemetry"`
 }
+
+func Load(path string) Config {
+
+}
