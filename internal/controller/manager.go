@@ -7,7 +7,8 @@ import (
 )
 
 // Controller interface represents a abstract structure
-// for our controllers.
+// for our controllers. Controllers get files from the given source, however their
+// logic is different based on their map key.
 type Controller interface {
 	GetFiles(address string) error
 }
