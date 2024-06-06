@@ -1,10 +1,13 @@
 package clone
 
 import (
+	"os"
 	"testing"
 )
 
 func callback() error {
+	os.RemoveAll("./tmp/clone")
+
 	return nil
 }
 

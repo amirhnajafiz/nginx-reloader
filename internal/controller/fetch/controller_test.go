@@ -1,10 +1,13 @@
 package fetch
 
 import (
+	"os"
 	"testing"
 )
 
 func callback() error {
+	os.RemoveAll("./tmp/fetch")
+
 	return nil
 }
 
