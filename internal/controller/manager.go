@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/amirhnajafiz/nginx-configmap-operator/internal/controller/clone"
 	"github.com/amirhnajafiz/nginx-configmap-operator/internal/controller/fetch"
+	"github.com/amirhnajafiz/nginx-configmap-operator/internal/utils"
 	"github.com/amirhnajafiz/nginx-configmap-operator/pkg"
 )
 
@@ -27,6 +28,6 @@ func LoadControllers(localDir, nginxDir string) map[string]Controller {
 // the getting files process successfully.
 func controllersCallbackFunc(localDir, nginxDir string) func() error {
 	return func() error {
-		return nil
+		return utils.MoveDir(localDir, nginxDir)
 	}
 }
