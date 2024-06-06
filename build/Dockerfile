@@ -28,4 +28,6 @@ COPY --from=builder /workspace/reloader .
 
 USER 65532:65532
 
+RUN apt install wget git 
+
 ENTRYPOINT ["/reloader"]
