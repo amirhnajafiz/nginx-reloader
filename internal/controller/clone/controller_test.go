@@ -1,20 +1,17 @@
 package clone
 
 import (
-	"fmt"
 	"testing"
 )
 
 func callback() error {
-	fmt.Println("done.")
-
 	return nil
 }
 
 func TestCloneController(t *testing.T) {
-	ctl := New("./tmp", callback)
+	ctl := New("./tmp/clone", callback)
 
-	if err := ctl.GetFiles(""); err != nil {
+	if err := ctl.GetFiles("https://github.com/amirhnajafiz/playbooks.git"); err != nil {
 		t.Error(err)
 	}
 }
