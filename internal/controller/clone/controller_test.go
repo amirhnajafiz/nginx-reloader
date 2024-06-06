@@ -7,6 +7,7 @@ import (
 
 func callback(_ string) error {
 	os.RemoveAll("./tmp/clone")
+	os.Remove("./tmp")
 
 	return nil
 }

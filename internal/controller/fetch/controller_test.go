@@ -7,6 +7,7 @@ import (
 
 func callback(_ string) error {
 	os.RemoveAll("./tmp/fetch")
+	os.Remove("./tmp")
 
 	return nil
 }
