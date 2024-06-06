@@ -8,10 +8,10 @@ import (
 // from the given address.
 type controller struct {
 	localDir string
-	callback func() error
+	callback func(string) error
 }
 
-func New(ld string, cb func() error) *controller {
+func New(ld string, cb func(string) error) *controller {
 	return &controller{
 		localDir: ld,
 		callback: cb,
@@ -28,5 +28,5 @@ func (c controller) GetFiles(address string) error {
 		return err
 	}
 
-	return c.callback()
+	return c.callback(c.localDir)
 }

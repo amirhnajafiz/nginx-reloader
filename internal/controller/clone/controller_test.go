@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func callback() error {
+func callback(_ string) error {
 	os.RemoveAll("./tmp/clone")
 
 	return nil

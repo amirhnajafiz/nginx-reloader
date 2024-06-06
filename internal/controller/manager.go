@@ -18,16 +18,16 @@ type Controller interface {
 func LoadControllers(localDir, nginxDir string) map[string]Controller {
 	list := make(map[string]Controller)
 
-	list[pkg.TypeClone] = clone.New(localDir, controllersCallbackFunc(localDir, nginxDir))
-	list[pkg.TypeFetch] = fetch.New(localDir, controllersCallbackFunc(localDir, nginxDir))
+	list[pkg.TypeClone] = clone.New(localDir, controllersCallbackFunc(nginxDir))
+	list[pkg.TypeFetch] = fetch.New(localDir, controllersCallbackFunc(nginxDir))
 
 	return list
 }
 
 // controllersCallbackFunc is function that each controller calls after it finishes
 // the getting files process successfully.
-func controllersCallbackFunc(localDir, nginxDir string) func() error {
-	return func() error {
-		return utils.MoveDir(localDir, nginxDir)
+func controllersCallbackFunc(nginxDir string) func(string) error {
+	return func(path string) error {
+		return utils.MoveDir(path, nginxDir)
 	}
 }
