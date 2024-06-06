@@ -1,7 +1,10 @@
 package fetch
 
 import (
+	"fmt"
 	"os/exec"
+	"path/filepath"
+	"strings"
 )
 
 // fetch controller downloads the files from the given address.
@@ -19,14 +22,30 @@ func New(ld string, cb func() error) *controller {
 }
 
 func (c controller) GetFiles(address string) error {
-	// use wget to download the content from the given address
-	// the -P flag specifies the directory prefix where all retrieved files and directories will be saved to
-	cmd := exec.Command("wget", "-P", c.localDir, "-r", address)
+	// get the file name from URL and determine the command to use for extraction
+	filename := filepath.Base(address)
+	if len(filename) == 0 {
+		return fmt.Errorf("your input address does not return a filename in its path: %s", address)
+	}
 
-	// execute the wget command
-	_, err := cmd.CombinedOutput()
-	if err != nil {
-		return err
+	// download the file using wget
+	if err := exec.Command("wget", address, "-P", c.localDir).Run(); err != nil {
+		return fmt.Errorf("error downloading file: %v", err)
+	}
+
+	// determine how to extract based on file extension
+	if strings.HasSuffix(filename, ".zip") {
+		// unzip the file
+		unzipCmd := exec.Command("unzip", filepath.Join(c.localDir, filename), "-d", c.localDir)
+		if err := unzipCmd.Run(); err != nil {
+			return fmt.Errorf("error unzipping file: %v", err)
+		}
+	} else if strings.HasSuffix(filename, ".tar.gz") {
+		// extract tar.gz file
+		tarCmd := exec.Command("tar", "xzf", filepath.Join(c.localDir, filename), "-C", c.localDir)
+		if err := tarCmd.Run(); err != nil {
+			return fmt.Errorf("error extracting tar.gz file: %v", err)
+		}
 	}
 
 	return c.callback()
