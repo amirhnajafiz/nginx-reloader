@@ -11,12 +11,14 @@ import (
 // it uses wget command.
 type controller struct {
 	localDir string
+	filename string
 	callback func(string) error
 }
 
-func New(ld string, cb func(string) error) *controller {
+func New(ld, fn string, cb func(string) error) *controller {
 	return &controller{
 		localDir: ld,
+		filename: fn,
 		callback: cb,
 	}
 }
@@ -24,8 +26,8 @@ func New(ld string, cb func(string) error) *controller {
 func (c controller) GetFiles(address string) error {
 	// get the file name from URL and determine the command to use for extraction
 	filename := filepath.Base(address)
-	if len(filename) == 0 {
-		return fmt.Errorf("your input address does not return a filename in its path: %s", address)
+	if len(c.filename) > 0 {
+		filename = c.filename
 	}
 
 	// download the file using wget

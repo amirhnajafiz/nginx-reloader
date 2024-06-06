@@ -15,11 +15,11 @@ type Controller interface {
 }
 
 // LoadControllers returns a map of controllers to be used by main.
-func LoadControllers(localDir, nginxDir string) map[string]Controller {
+func LoadControllers(localDir, nginxDir, filename string) map[string]Controller {
 	list := make(map[string]Controller)
 
 	list[pkg.TypeClone] = clone.New(localDir, controllersCallbackFunc(nginxDir))
-	list[pkg.TypeFetch] = fetch.New(localDir, controllersCallbackFunc(nginxDir))
+	list[pkg.TypeFetch] = fetch.New(localDir, filename, controllersCallbackFunc(nginxDir))
 
 	return list
 }

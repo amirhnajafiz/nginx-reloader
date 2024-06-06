@@ -16,7 +16,7 @@ func main() {
 	}
 
 	// load controllers (first store them in tmp local dir, after that move them to nginx html dir)
-	ctls := controller.LoadControllers(cfg.TmpLocalDir, cfg.NginxHTMLDir)
+	ctls := controller.LoadControllers(cfg.TmpLocalDir, cfg.NginxHTMLDir, cfg.Filename)
 
 	// use the controller that is set in configs
 	if ctl, ok := ctls[cfg.Type]; ok {

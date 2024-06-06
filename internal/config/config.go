@@ -10,6 +10,7 @@ import (
 type Config struct {
 	Type         string `env:"NR_TYPE" envDefault:"download"`
 	Address      string `env:"NR_ADDRESS,required"`
+	Filename     string `env:"NR_DOWNLOAD_FILENAME"`
 	NginxHTMLDir string `env:"NR_NGINX_HTML_DIR" envDefault:"/usr/share/nginx/html"`
 	TmpLocalDir  string `env:"NR_TMP_LOCAL_DIR" envDefault:"/etc/nginx-reloader/tmp"`
 }
