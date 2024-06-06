@@ -5,3 +5,5 @@ export/
 .DS_Store
 .idea/
 .vscode/
+
+tmp/
