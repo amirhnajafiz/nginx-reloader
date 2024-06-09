@@ -4,8 +4,7 @@
 ![GitHub issues](https://img.shields.io/github/issues/amirhnajafiz/nginx-reloader)
 ![GitHub forks](https://img.shields.io/github/forks/amirhnajafiz/nginx-reloader)
 ![GitHub stars](https://img.shields.io/github/stars/amirhnajafiz/nginx-reloader)
-![GitHub license](https://img.shields.io/github/license/amirhnajafiz/nginx-reloader)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/amirhnajafiz/nginx-reloader/CI)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/amirhnajafiz/nginx-reloader/release)
 
 ## Overview
 
