@@ -1,11 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
 
 	"github.com/amirhnajafiz/nginx-configmap-operator/internal/config"
 	"github.com/amirhnajafiz/nginx-configmap-operator/internal/controller"
+
+	"github.com/tidwall/pretty"
 )
 
 func main() {
@@ -15,7 +18,18 @@ func main() {
 		panic(err)
 	}
 
-	log.Println("load configs.")
+	indent, err := json.MarshalIndent(cfg, "", "\t")
+	if err != nil {
+		log.Fatalf("error marshaling config to json: %s", err)
+	}
+
+	indent = pretty.Color(indent, nil)
+	tmpl := `
+	================ Loaded Configuration ================
+	%s
+	======================================================
+	`
+	log.Printf(tmpl, string(indent))
 
 	// load controllers (first store them in tmp local dir, after that move them to nginx html dir)
 	ctls := controller.LoadControllers(cfg.TmpLocalDir, cfg.NginxHTMLDir, cfg.Filename)
