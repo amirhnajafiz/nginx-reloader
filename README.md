@@ -4,7 +4,7 @@
 ![GitHub issues](https://img.shields.io/github/issues/amirhnajafiz/nginx-reloader)
 ![GitHub forks](https://img.shields.io/github/forks/amirhnajafiz/nginx-reloader)
 ![GitHub stars](https://img.shields.io/github/stars/amirhnajafiz/nginx-reloader)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/amirhnajafiz/nginx-reloader/release)
+![GitHub Workflow Status](https://github.com/amirhnajafiz/nginx-reloader/actions/workflows/release.yaml/badge.svg)
 
 ## Overview
 
