@@ -29,4 +29,4 @@ COPY --from=builder /workspace/reloader .
 RUN apk add --no-cache git
 RUN apk add --no-cache wget
 
-ENTRYPOINT ["/reloader"]
+ENTRYPOINT ["./reloader"]
