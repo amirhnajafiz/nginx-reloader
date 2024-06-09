@@ -1,6 +1,7 @@
 package clone
 
 import (
+	"fmt"
 	"os/exec"
 )
 
@@ -25,7 +26,7 @@ func (c controller) GetFiles(address string) error {
 	// execute the git clone command
 	_, err := cmd.CombinedOutput()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to run git command: %v", err)
 	}
 
 	return c.callback(c.localDir)

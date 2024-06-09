@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"fmt"
+
 	"github.com/amirhnajafiz/nginx-configmap-operator/internal/controller/clone"
 	"github.com/amirhnajafiz/nginx-configmap-operator/internal/controller/fetch"
 	"github.com/amirhnajafiz/nginx-configmap-operator/internal/utils"
@@ -28,6 +30,10 @@ func LoadControllers(localDir, nginxDir, filename string) map[string]Controller 
 // the getting files process successfully.
 func controllersCallbackFunc(nginxDir string) func(string) error {
 	return func(path string) error {
-		return utils.MoveDir(path, nginxDir)
+		if err := utils.MoveDir(path, nginxDir); err != nil {
+			return fmt.Errorf("failed to move files to new directory: %v", err)
+		}
+
+		return nil
 	}
 }
