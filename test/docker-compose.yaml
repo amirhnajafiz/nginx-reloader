@@ -1,7 +1,7 @@
 version: '3'
 services:
   nginx-reloader:
-    image: amirhossein21/nginx-reloader:v0.1.2
+    image: amirhossein21/nginx-reloader:v0.1.3
     environment:
       - NR_TYPE=clone
       - NR_ADDRESS=https://github.com/research-camp/profile.git
