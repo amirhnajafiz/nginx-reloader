@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3'
 services:
   nginx-reloader:
     image: amirhossein21/nginx-reloader:v0.1.0
@@ -8,21 +8,15 @@ services:
       - NR_NGINX_HTML_DIR=/etc/nginx-reloader/tmp
       - NR_TMP_LOCAL_DIR=/etc/nginx-reloader/nginx
     volumes:
-      - type: volume
-        source: nginx-reloader-data
-        target: /etc/nginx-reloader/tmp
-      - type: volume
-        source: nginx-var-dir
-        target: /etc/nginx-reloader/nginx
+      - nginx-reloader-data:/etc/nginx-reloader/tmp
+      - nginx-var-dir:/etc/nginx-reloader/nginx
 
   nginx:
     image: nginx:latest
     ports:
       - "8080:80"
     volumes:
-      - type: volume
-        source: nginx-var-dir
-        target: /usr/share/nginx/
+      - nginx-var-dir:/usr/share/nginx/
     depends_on:
       - nginx-reloader
 
