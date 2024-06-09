@@ -24,8 +24,12 @@ func (c controller) GetFiles(address string) error {
 	cmd := exec.Command("git", "clone", address, c.localDir)
 
 	// execute the git clone command
-	_, err := cmd.CombinedOutput()
+	msg, err := cmd.CombinedOutput()
 	if err != nil {
+		if len(msg) > 0 {
+			err = fmt.Errorf("message: %s, err: %s", msg, err)
+		}
+
 		return fmt.Errorf("failed to run git command: %v", err)
 	}
 
