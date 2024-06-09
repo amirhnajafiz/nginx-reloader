@@ -26,8 +26,6 @@ WORKDIR /etc/nginx-reloader
 
 COPY --from=builder /workspace/reloader .
 
-USER 65532:65532
-
 RUN apk add --no-cache git
 RUN apk add --no-cache wget
 
