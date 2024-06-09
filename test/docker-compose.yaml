@@ -16,7 +16,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - nginx-var-dir:/usr/share/nginx/
+      - nginx-var-dir:/usr/share/nginx/html
     depends_on:
       - nginx-reloader
 
