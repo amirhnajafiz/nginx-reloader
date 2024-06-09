@@ -4,7 +4,7 @@ services:
     image: amirhossein21/nginx-reloader:v0.1.2
     environment:
       - NR_TYPE=clone
-      - NR_ADDRESS=https://github.com/research-camp/profile
+      - NR_ADDRESS=https://github.com/research-camp/profile.git
       - NR_NGINX_HTML_DIR=/etc/nginx-reloader/tmp
       - NR_TMP_LOCAL_DIR=/etc/nginx-reloader/nginx
     volumes:
