@@ -1,0 +1,31 @@
+version: '3.9'
+services:
+  nginx-reloader:
+    image: amirhossein21/nginx-reloader:v0.1.0
+    environment:
+      - NR_TYPE=clone
+      - NR_ADDRESS=https://github.com/research-camp/profile
+      - NR_NGINX_HTML_DIR=/etc/nginx-reloader/tmp
+      - NR_TMP_LOCAL_DIR=/etc/nginx-reloader/nginx
+    volumes:
+      - type: volume
+        source: nginx-reloader-data
+        target: /etc/nginx-reloader/tmp
+      - type: volume
+        source: nginx-var-dir
+        target: /etc/nginx-reloader/nginx
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - type: volume
+        source: nginx-var-dir
+        target: /usr/share/nginx/
+    depends_on:
+      - nginx-reloader
+
+volumes:
+  nginx-reloader-data:
+  nginx-var-dir:
